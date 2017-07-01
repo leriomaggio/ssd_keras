@@ -15,9 +15,9 @@ class Normalize(Layer):
 
     # Input shape
         4D tensor with shape:
-        `(samples, channels, rows, cols)` if dim_ordering='th'
+        `(samples, channels, rows, cols)` if image_data_format='channels_first'
         or 4D tensor with shape:
-        `(samples, rows, cols, channels)` if dim_ordering='tf'.
+        `(samples, rows, cols, channels)` if image_data_format='channels_last'.
 
     # Output shape
         Same as input
@@ -29,7 +29,7 @@ class Normalize(Layer):
         Add possibility to have one scale for all features.
     """
     def __init__(self, scale, **kwargs):
-        if K.image_dim_ordering() == 'tf':
+        if K.image_data_format() == 'channels_last':
             self.axis = 3
         else:
             self.axis = 1
@@ -64,9 +64,9 @@ class PriorBox(Layer):
 
     # Input shape
         4D tensor with shape:
-        `(samples, channels, rows, cols)` if dim_ordering='th'
+        `(samples, channels, rows, cols)` if image_data_format='channels_first'
         or 4D tensor with shape:
-        `(samples, rows, cols, channels)` if dim_ordering='tf'.
+        `(samples, rows, cols, channels)` if image_data_format='channels_last'.
 
     # Output shape
         3D tensor with shape:
@@ -80,7 +80,7 @@ class PriorBox(Layer):
         Add Theano support
     """
     def __init__(self, img_size, min_size, max_size=None, aspect_ratios=None,
-                 flip=True, variances=[0.1], clip=True, **kwargs):
+                 flip=True, variances=(0.1,), clip=True, **kwargs):
         if K.image_dim_ordering() == 'tf':
             self.waxis = 2
             self.haxis = 1
@@ -108,7 +108,8 @@ class PriorBox(Layer):
         self.clip = True
         super(PriorBox, self).__init__(**kwargs)
 
-    def get_output_shape_for(self, input_shape):
+    def compute_output_shape(self, input_shape):
+        """Compute the output shape for tensor(s)"""
         num_priors_ = len(self.aspect_ratios)
         layer_width = input_shape[self.waxis]
         layer_height = input_shape[self.haxis]

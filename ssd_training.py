@@ -8,11 +8,15 @@ class MultiboxLoss(object):
 
     # Arguments
         num_classes: Number of classes including background.
+
         alpha: Weight of L1-smooth loss.
+
         neg_pos_ratio: Max ratio of negative to positive boxes in loss.
+
         background_label_id: Id of background label.
+
         negatives_for_hard: Number of negative boxes to consider
-            it there is no positive boxes in batch.
+            if there is no positive boxes in batch.
 
     # References
         https://arxiv.org/abs/1512.02325
@@ -71,12 +75,14 @@ class MultiboxLoss(object):
         """Compute mutlibox loss.
 
         # Arguments
+
             y_true: Ground truth targets,
                 tensor of shape (?, num_boxes, 4 + num_classes + 8),
                 priors in ground truth are fictitious,
                 y_true[:, :, -8] has 1 if prior should be penalized
                     or in other words is assigned to some ground truth box,
                 y_true[:, :, -7:] are all 0.
+
             y_pred: Predicted logits,
                 tensor of shape (?, num_boxes, 4 + num_classes + 8).
 
